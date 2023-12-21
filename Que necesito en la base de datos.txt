@@ -1,0 +1,14 @@
+Mi base de datos debe almacenar por un lado los reclamos:
+
+RECLAMOS:
+    Cada reclamo como objeto debe conocer quien lo generó, a que hora y quienes adhieren a él. Además de obviamente el texto, ID y el estado del mismo.
+    Otro atributo será a que secretaría pertenece.
+
+Y por otro los datos de los usuarios: 
+    Deben conocer su nombre de usuario, correo, contraseña, claustro, ID de usuario(puede ser coincidente con el nombre de usuario) y algunos datos adicionales (Edad, DNI, Nombre real)
+
+También necesecitaremos datos de los "SuperUsuarios":
+    Rango I (jefe de departamento) o II (secterio técnico)
+
+Y datos requeridos para la estadistica:
+    
