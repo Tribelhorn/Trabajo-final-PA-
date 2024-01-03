@@ -1,25 +1,57 @@
 import sqlite3
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
 
 app = Flask(__name__)
 
+#indica la ruta donde se crea la base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mi_base_de_datos.db'
 
 db = SQLAlchemy(app)
 
+#Tabla relacional entre usuario y reclamo 
 usuario_reclamo = db.Table("usuario_reclamo", db.Column('n_usuario', db.Integer, db.ForeignKey('usuario.n_usuario'), primary_key=True), db.Column('codigo_reclamo', db.Integer, db.ForeignKey('reclamo.codigo'), primary_key=True) )
 
 class Usuario(db.Model):
     n_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String())
+    correo = db.Column(db.String())
+    contraseña = db.Column(db.String())
+    nombre_de_pila = db.Column(db.String())
+    dni = db.Column(db.Integer())
+    edad = db.Column(db.Integer())
+    claustro = db.Column(db.String())
+    def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad, claustro):
+        self.nombre_usuario = nombre_usuario 
+        self.correo = correo
+        self.contraseña = contraseña
+        self.nombre_de_pila = nombre_de_pila
+        self.dni = dni
+        self.edad = edad
+        self.claustro = claustro
+
+class Usuario_Final(Usuario):
     reclamos = db.relationship('Reclamo', secondary=usuario_reclamo, backref = db.backref('usuarios adheridos'))
 
-class Reclamo(db.Model):
-    codigo = db.Column(db.Integer, primary_key=True)
-    texto = db.Column(db.String, primary_key=True)
-    creador = db.relationship('Usuario', backref=db.backref('mis_reclamos', lazy=True))
+class Jefe(Usuario):
+    pass
 
+class Secretario(Usuario):
+    pass
+
+class Reclamo(db.Model):
+    codigo = db.Column(db.Integer(), primary_key=True)
+    texto = db.Column(db.String(), primary_key=True)
+    estado = db.Column(db.String())
+    fecha = db.Column(db.DateTime())
+    creador = db.relationship('Usuario_Final', backref=db.backref('mis_reclamos', lazy=True))
+    def __init__(self, texto, creador):
+        self.texto = texto
+        self.creador = creador
+        self.estado = "Pendiente"
+        self.fecha = datetime.now()
 
 """
 

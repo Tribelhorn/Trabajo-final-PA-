@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Bienvenido</title>
-</head>
+{% extends 'layout.html' %}
+
+<title>Inicio</title>
+
+{% block body %}
+
 <body method="POST">
     { from.csrf_token }
- <a href="{{ url_for('')}}"> Hola mun! </a>>
-<h1></h1>
+ <a href="{{ url_for('')}}">  </a>>
+
 <p></p>
 
 </body>
-</html>
+{% block body %}
