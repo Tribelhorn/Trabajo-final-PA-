@@ -17,12 +17,12 @@ with app.app_context():
 
 
 #Definimos la función hola() con el decorador app.route que indica en la ruta "/"
-@app.route("/")
-def hola():
-    return "Hola mundo"
+#@app.route("/")
+#def hola():
+#    return "Hola mundo"
 
 #render_template renderiza una plantilla html
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
     return render_template("login.html")        
 
