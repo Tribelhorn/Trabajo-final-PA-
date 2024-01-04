@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<h1> REGISTRARSE </h1>
+
+<form method="post" action="/">
+    Usuario: <br>
+    <input type="text" id="usuario" name="nombre_usuario"> <br>
+    <br>
+    Correo:<br>
+    <input type="text" id="correo" name="correo"> <br>
+    <br>
+    Contraseña: <br>
+    <input type="text" id="contraseña" name="contraseña"> <br>
+    <br>
+    Repetir Contraseña: <br>
+    <input type="text" id="r_contraseña" name="r_contraseña"> <br>
+    <br>
+    Nombre y Apellido:<br>
+    <input type="text" id="n_y_a" name="n_y_a"> <br>
+    <br>
+    DNI:<br>
+    <input type="text" id="dni" name="dni"> <br>
+    <br>
+    Edad:<br>
+    <input type="text" id="edad" name="n_y_a"> <br>
+    <br>
+    Claustro:<br>
+    <input type="radio" id="alumno" name="claustro">
+    <label for="alumno">Alumno</label><br>
+    <input type="radio" id="profe" name="claustro" >
+    <label for="profe">Profesor</label><br>
+    <input type="radio" id="pays" name="claustro">
+    <label for="pays">PAyS</label>
+    <br><br>
+    <button type="submit">Enviar registro</button>
+    <br>
+    <br>
+</form><br><br>
+    <a href="/"> ¿Ya estás registrado? </a>
+
+    
+    
+
+
+
+{% endblock %}

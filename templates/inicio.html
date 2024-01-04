@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+<h1> Bienvenido {% nombre_usuario%} !!! </h1>
+<body>Nombre: {%session["nombre_de_pila"]%} <br>
+
+    Edad: {%session["edad"]%}
+    <br><br>
+    <p href="/mis_reclamos"> Mis Reclamos</p><br>
+</body>
+
+
+{% endblock %}

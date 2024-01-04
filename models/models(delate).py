@@ -16,9 +16,9 @@ usuario_reclamo = db.Table("usuario_reclamo", db.Column('n_usuario', db.Integer,
 
 class Usuario(db.Model):
     n_usuario = db.Column(db.Integer, primary_key=True)
-    nombre_usuario = db.Column(db.String())
-    correo = db.Column(db.String())
-    contraseña = db.Column(db.String())
+    nombre_usuario = db.Column(db.String(), unique=True, nullable=False)
+    correo = db.Column(db.String(), unique=True, nullable=False)
+    contraseña = db.Column(db.String(), nullable=False)
     nombre_de_pila = db.Column(db.String())
     dni = db.Column(db.Integer())
     edad = db.Column(db.Integer())
@@ -43,8 +43,8 @@ class Secretario(Usuario):
 
 class Reclamo(db.Model):
     codigo = db.Column(db.Integer(), primary_key=True)
-    texto = db.Column(db.String(), primary_key=True)
-    estado = db.Column(db.String())
+    texto = db.Column(db.String(), primary_key=True, nullable=False)
+    estado = db.Column(db.String(), nullable=False)
     fecha = db.Column(db.DateTime())
     creador = db.relationship('Usuario_Final', backref=db.backref('mis_reclamos', lazy=True))
     def __init__(self, texto, creador):
