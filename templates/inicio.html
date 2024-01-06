@@ -2,12 +2,13 @@
 
 
 {% block body %}
-<h1> Bienvenido {% nombre_usuario%} !!! </h1>
-<body>Nombre: {%session["nombre_de_pila"]%} <br>
+<h1> Bienvenido {{ nombre_usuario }} !!! </h1>
+<body>Nombre: {{session["nombre_de_pila"]}} <br>
 
-    Edad: {%session["edad"]%}
+    Edad: {{session["edad"]}}
     <br><br>
-    <p href="/mis_reclamos"> Mis Reclamos</p><br>
+    <a href="/mis_reclamos"> Mis Reclamos</a><br><br><br>
+    <a href="/">Cerrar Sesión</a>
 </body>
 
 

@@ -2,9 +2,11 @@
 
 {% block body %}
 
-<h1> REGISTRARSE </h1>
+<h1> REGISTRARSE </h1><br>
 
-<form method="post" action="/">
+    {{ Mensaje }}
+
+<form method="POST" action="/registro">
     Usuario: <br>
     <input type="text" id="usuario" name="nombre_usuario"> <br>
     <br>
@@ -12,10 +14,10 @@
     <input type="text" id="correo" name="correo"> <br>
     <br>
     Contraseña: <br>
-    <input type="text" id="contraseña" name="contraseña"> <br>
+    <input type="password" id="contraseña" name="contraseña"> <br>
     <br>
     Repetir Contraseña: <br>
-    <input type="text" id="r_contraseña" name="r_contraseña"> <br>
+    <input type="password" id="r_contraseña" name="r_contraseña"> <br>
     <br>
     Nombre y Apellido:<br>
     <input type="text" id="n_y_a" name="n_y_a"> <br>
@@ -24,7 +26,7 @@
     <input type="text" id="dni" name="dni"> <br>
     <br>
     Edad:<br>
-    <input type="text" id="edad" name="n_y_a"> <br>
+    <input type="text" id="edad" name="edad"> <br>
     <br>
     Claustro:<br>
     <input type="radio" id="alumno" name="claustro">
