@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+<title>Inicio</title>
+
+{% block body %}
+
+<h1>Bienvenido, {{session["claustro"]}} {{session["nombre_de_pila"]}}!!!</h1>
+    <br><br>
+
+    <a href="/reclamos"> Manejar Reclamos </a><br><br>
+    <a href="/analitica"> Analitica </a><br><br>
+    <a href="/help"> Ayuda </a><br><br>
+    <a href="/">Cerrar Sesión</a>
+
+{% endblock %}
