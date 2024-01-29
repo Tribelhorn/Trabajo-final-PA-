@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+
+<h1> Crear reclamo!!! </h1>
+
+<form action="/crear_reclamo" method="post">
+    <p> Asunto: </p>
+    <textarea name="asunto" rows="1" cols="30" id="asunto"></textarea>
+    <br>
+     Reclamo:<br>
+    <textarea name="texto" rows="10" cols="30" id="texto"></textarea>
+    <br>
+    <input type="submit">
+  </form>
+
+
+<a href="/inicio"> Volver </a>
+
+{% endblock %}

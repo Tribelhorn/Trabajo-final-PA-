@@ -60,3 +60,14 @@ class Secretario(Usuario):
         self.claustro = "secretario"
 """
 
+
+
+
+
+
+
+"""
+    __mapper_args__ = {
+        'polymorphic_identity': 'usuario_final',
+        'inherit_condition': (n_usuario == Usuario.n_usuario)}
+"""

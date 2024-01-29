@@ -48,6 +48,13 @@ class Usuario(db.Model):
     secretario=db.relationship("Secretario", uselist=False,
         back_populates="secretario",cascade="all, delete-orphan", lazy='dynamic')"""
     
+    __mapper_args__ = {
+        'polymorphic_identity': 'usuario',
+        'with_polymorphic': '*',
+        "polymorphic_on": tipo_usuario}
+    
+
+
     #claustro = db.Column(db.String(66))
     #reclamos_creados = db.relationship('Reclamo', back_populates='creador')#, lazy='dynamic')
     #adhesiones = db.relationship('Reclamo', back_populates='usuarios_adheridos')#, lazy='dynamic')
@@ -72,9 +79,11 @@ class Usuario_Final(Usuario):
     adhesiones = db.relationship('Reclamo', back_populates='usuarios_adheridos', secondary='adhesiones', lazy='dynamic')
     #usuario=db.relationship("Usuario", uselist=False, back_populates="usuario_final",cascade="all, delete-orphan", lazy='dynamic')
 
+    #Ésta configuracion permite que al intanciar una clase hija se almacene en la tabla de usuario 
     __mapper_args__ = {
-        'polymorphic_identity': 'comment',
-        'inherit_condition': (n_usuario == Usuario.n_usuario)}
+        'polymorphic_identity': 'final',
+        'with_polymorphic': '*'}
+        #'inherit_condition': (n_usuario == Usuario.n_usuario)}
 
     def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad, claustro):
         super().__init__ (nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad)
@@ -92,8 +101,9 @@ class Jefe(Usuario):
     #usuario=db.relationship("Usuario", uselist=False, back_populates="jefe", lazy='dynamic')
     
     __mapper_args__ = {
-        'polymorphic_identity': 'comment',
-        'inherit_condition': (n_usuario == Usuario.n_usuario)}
+        'polymorphic_identity': 'jefe',
+        'with_polymorphic': '*'}
+        #'inherit_condition': (n_usuario == Usuario.n_usuario)}
 
     def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad, departamento):
         super().__init__(nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad)
@@ -105,8 +115,9 @@ class Secretario(Usuario):
     n_usuario= db.mapped_column(db.Integer(), db.ForeignKey(Usuario.n_usuario), primary_key=True,  use_existing_column=True)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'comment',
-        'inherit_condition': (n_usuario == Usuario.n_usuario)}
+        'polymorphic_identity': 'secretario',
+        'with_polymorphic': '*'}
+        #'inherit_condition': (n_usuario == Usuario.n_usuario)}
 
     def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad):
         super().__init__ (nombre_usuario, correo, contraseña, nombre_de_pila, dni, edad)
@@ -119,6 +130,7 @@ class Secretario(Usuario):
 
 class Reclamo(db.Model):
     codigo = db.Column(db.Integer(), primary_key=True)
+    asunto = db.Column(db.String(66), nullable=False)
     texto = db.Column(db.String(666), nullable=False)
     estado = db.Column(db.String(66), nullable=False)
     fecha = db.Column(db.DateTime())
@@ -128,9 +140,11 @@ class Reclamo(db.Model):
     creador = db.relationship('Usuario_Final', back_populates='reclamos_creados')
     usuarios_adheridos = db.relationship('Usuario_Final', secondary='adhesiones', back_populates='adhesiones', lazy='dynamic')
 
-    def __init__(self, texto, creador):
+    def __init__(self, asunto, texto,  creador_id):
         self.texto = texto
-        self.creador = creador
+        self.asunto = asunto
+        self.creador_id = creador_id
+        self.creador = Usuario.query.filter_by(n_usuario=creador_id).first()
         self.estado = "Pendiente"
         self.fecha = datetime.now()
         self.usuarios_adheridos = []
