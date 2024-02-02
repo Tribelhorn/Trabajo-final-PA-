@@ -11,7 +11,9 @@ from nltk.corpus import stopwords
 #llevar palabras a palabras base
 import spacy 
 #Vectorizar palabras para procesar las similitudes
-from gensim.models.keyedvectors import KeyedVectors
+#from gensim.models.keyedvectors import KeyedVectors
+#El modulo io se utiliza para abrir y manejar el archivo del modelo de palabras voctorizadas
+#import io
 
 #Instanciamos un objeto app de la calse Flask con el argumento __name__ que indica la ubicación del archivo 
 #app = Flask(__name__)
@@ -27,12 +29,22 @@ db = SQLAlchemy(app)
 with app.app_context():
     db.create_all()
 
+"""
 
-archivo_vectores = 'fasttext-sbwc.3.6.e20.vec'
-cantidad = 100000
-vectores = KeyedVectors.load_word2vec_format(archivo_vectores, limit=cantidad)
+def load_vectors(archivo):
+    fin = io.open(archivo, 'r', encoding='utf-8', newline='\n', errors='ignore')
+    n, d = map(int, fin.readline().split())
+    data = {}
+    for line in fin:
+        tokens = line.rstrip().split(' ')
+        data[tokens[0]] = map(float, tokens[1:])
+    return data
+
+"""
 
 
+#archivo = '/data/'
+#data = load_vectors(archivo)
 
 
 
@@ -141,32 +153,59 @@ def logout():
 @app.route("/crear_reclamo", methods=["GET","POST"])
 def crear_reclamo():
     if request.method == "POST":
-         
-        usuario_id = session['n_usuario']
-        asunto = request.form.get('asunto')
-        texto = request.form.get('texto')
-        new_reclamo = Reclamo(asunto, texto, usuario_id)
-
-        frases = sent_tokenize(texto, language='spanish')
+        try:
+            usuario_id = session['n_usuario']
+            asunto = request.form.get('asunto')
+            texto = request.form.get('texto')
+            new_reclamo = Reclamo(asunto, texto, usuario_id)
+            todo_texto = asunto + ' ' + texto
+            frases = sent_tokenize(todo_texto, language='spanish')
     
         # Descarga las stopwords de NLTK en español y crea un conjunto
-        stop_words = set(stopwords.words('spanish'))
+            stop_words = set(stopwords.words('spanish'))
 
-        # Elimina las stopwords de cada frase
-        frases_filtradas = []
-        nlp = spacy.load("es_core_news_sm")
-        for frase in frases:
-            palabras = word_tokenize(frase, language='spanish')
-            palabras_filtradas = [palabra for palabra in palabras if palabra.lower() not in stop_words]
-            frases_filtradas.append(' '.join(palabras_filtradas))
-        for frase in frases_filtradas:
-            doc = nlp(frase)
-            lemas = [token.lemma_ for token in doc]
-        
+            # Elimina las stopwords de cada frase
+            frases_filtradas = []
+            nlp = spacy.load("es_core_news_sm")
+            for frase in frases:
+                #recorta las frases en palabras
+                palabras = word_tokenize(frase, language='spanish')
+                #filtra las palabras verificando que no sean stopwords
+                palabras_filtradas = [palabra for palabra in palabras if palabra.lower() not in stop_words]
+                #concatena las palabras en una frase nueva
+                frases_filtradas.append(' '.join(palabras_filtradas))
 
-        db.session.add(new_reclamo)
-        db.session.commit()
-        
+            # Lemaniza las palabras
+            for frase in frases_filtradas:
+                doc = nlp(frase)
+                lemas = [token.lemma_ for token in doc]
+                print(frase)
+            
+            dptos = Departamento.query.all()
+            base=0
+            print(dptos)
+            for dpto in dptos:
+                coincidencias = 0
+                print(dpto)
+                lista= dpto.keywords.split()
+                
+                for lema in lemas:
+                    if lema in lista:
+                        coincidencias = +1
+                        print(coincidencias)
+                    print(lema)
+                if coincidencias > base: 
+                    destino = dpto
+                    base = coincidencias
+            destino.asignar_reclamo(new_reclamo)
+
+            db.session.add(new_reclamo)
+            
+            db.session.commit()
+
+        except Exception:
+           return render_template("/crear_reclamo.html")
+
         return redirect('/reclamos')
     else:
         return render_template("/crear_reclamo.html")

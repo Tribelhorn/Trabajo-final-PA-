@@ -20,8 +20,10 @@ class Departamento(db.Model):
     n_usuario = db.Column(db.Integer(), db.ForeignKey("jefes.n_usuario", deferrable=True, initially='deferred'))
     #jefe_dpto = db.relationship("Jefe", back_populates="departamento", lazy='dynamic', uselist=False)
     reclamos_dpto=db.relationship("Reclamo", back_populates="departamento", lazy='dynamic')
+    keywords = db.Column(db.String(666))
     def __init__(self, nombre):
         self.nombre_dpto = nombre
+        self.keywords = ""
     def asignar_jefe(self, jefe):
         self.jefe_dpto = jefe.n_usuario
     def asignar_reclamo(self, Reclamo):
@@ -29,6 +31,8 @@ class Departamento(db.Model):
             self.reclamos_dpto.append(Reclamo)
         else:
             pass
+    def cargar_keywords(self, texto):
+        self.keywords = texto
 
 
 
