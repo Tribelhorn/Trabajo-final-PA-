@@ -210,9 +210,32 @@ def crear_reclamo():
     else:
         return render_template("/crear_reclamo.html")
 
+
+@app.route("/mis_reclamos", methods=["GET","POST"])
+def mis_reclamos():
+    bandera = "mis"
+    return redirect("/reclamos")
+
+@app.route("/listar_reclamos", methods=["GET","POST"])
+def listar_reclamos():
+    bandera = "listar"
+    return redirect("/reclamos")
+
 @app.route("/reclamos", methods=["GET","POST"])
 def reclamos():
-    return render_template("/reclamos.html")
+    if request.method == "POST":
+
+        pass
+        
+    else:
+
+        if bandera == "mis":
+            reclamos = Reclamo.query.filter_by(creador_id=session['n_usuario']).all()
+
+        elif bandera == "listar":
+            reclamos = Reclamo.query.all()
+
+        return render_template("/reclamos.html", reclamos=reclamos)
 
 #Éstas líneas corren el programa de manera "continua"
 if __name__ == "__main__":

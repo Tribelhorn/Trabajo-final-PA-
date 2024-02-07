@@ -2,6 +2,47 @@
 
 {% block body %}
 
-Nada por aquí
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    </style>
+
+<table >
+  <thead>
+      <tr>
+        <th> Asunto </th>
+        <th> Cuerpo </th>
+        <th> Estado </th>
+        <th> Creador </th>
+        <th> Adherentes </th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for reclamo in reclamos %}
+      <tr> 
+        <td> {{ reclamo.asunto }} </td>
+        <td> {{ reclamo.texto }} </td>
+        <td> {{ reclamo.estado }} </td>
+        <td> {{ reclamo.creador.nombre_usuario }} </td>
+        <td> {{ reclamo.creador }} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+
 
 {% endblock %}
