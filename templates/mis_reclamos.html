@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    </style>
+
+<form method="POST" action="/mis_reclamos" >
+  <label> Departamento:</label>
+  <select id="filtro" name="departamento">
+    {% for departamento in departamentos %}
+    <option value= "{{departamento.n_dpto}}" > {{departamento.nombre_dpto}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit">
+</form>
+
+<table >
+  <thead>
+      <tr>
+        <th> Asunto </th>
+        <th> Cuerpo </th>
+        <th> Estado </th>
+        <th> Creador </th>
+        <th> Fecha </th>
+        <th> Adherentes</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for reclamo in reclamos %}
+      <tr> 
+        <td> {{ reclamo.asunto }} </td>
+        <td> {{ reclamo.texto }} </td>
+        <td> {{ reclamo.estado }} </td>
+        <td> {{ reclamo.creador.nombre_usuario }} </td>
+        <td> {{ reclamo.fecha }} </td>
+        <td> {{ reclamo.usuarios_adheridos.count()  }} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+<br>
+<br>
+<a href="/inicio"> Volver </a>
+
+{% endblock %}

@@ -64,10 +64,10 @@ def registro():
                 contraseña = request.form.get('contraseña')
                 correo= request.form.get('correo')
                 nombre_de_pila = request.form.get('n_y_a')
-                dni = int(request.form.get('dni'))
+                #dni = int(request.form.get('dni'))
                 edad = int(request.form.get('edad'))
                 claustro = request.form.get('claustro')
-                new_user = Usuario_Final(nombre_usuario=nombre_usuario, correo=correo, contraseña=contraseña, nombre_de_pila=nombre_de_pila, dni=dni, edad=edad, claustro=claustro)
+                new_user = Usuario_Final(nombre_usuario=nombre_usuario, correo=correo, contraseña=contraseña, nombre_de_pila=nombre_de_pila, edad=edad, claustro=claustro)
             
                 with app.app_context():
                     db.session.add(new_user)
@@ -153,11 +153,13 @@ def logout():
 @app.route("/crear_reclamo", methods=["GET","POST"])
 def crear_reclamo():
     if request.method == "POST":
-        try:
+        #try:
+            if 'imagen' in request.form:
+                session['imagen']=request.form['imagen']
             usuario_id = session['n_usuario']
             asunto = request.form.get('asunto')
             texto = request.form.get('texto')
-            new_reclamo = Reclamo(asunto, texto, usuario_id)
+            #new_reclamo = Reclamo(asunto, texto, usuario_id)
             todo_texto = asunto + ' ' + texto
             frases = sent_tokenize(todo_texto, language='spanish')
     
@@ -179,64 +181,110 @@ def crear_reclamo():
             for frase in frases_filtradas:
                 doc = nlp(frase)
                 lemas = [token.lemma_ for token in doc]
-                print(frase)
-            
-            dptos = Departamento.query.all()
-            base=0
-            print(dptos)
-            for dpto in dptos:
-                coincidencias = 0
-                print(dpto)
-                lista= dpto.keywords.split()
+            try: 
+                dptos = Departamento.query.all()
+                base=0
+                print(dptos)
+                for dpto in dptos:
+                    print(dpto)
+                    coincidencias = 0
+                    lista= dpto.keywords.split()
+                    print(lista)
+                    
+                    for lema in lemas:
+                        print("("+lema+")")
+                        if lema in lista:
+                            coincidencias = +1
+                    print(coincidencias)
+                    if coincidencias > base: 
+                        destino = dpto
+                        base = coincidencias
+                print(destino)
+                session['asunto'] = asunto
+                session['texto'] = texto
+                session['n_dpto'] = destino.n_dpto  
                 
-                for lema in lemas:
-                    if lema in lista:
-                        coincidencias = +1
-                        print(coincidencias)
-                    print(lema)
-                if coincidencias > base: 
-                    destino = dpto
-                    base = coincidencias
-            destino.asignar_reclamo(new_reclamo)
+    
+                return redirect("/confirmar")
 
-            db.session.add(new_reclamo)
+            except:
+                new_reclamo = Reclamo(asunto, texto, usuario_id)
+                db.session.add(new_reclamo)
+                if 'imagen' in session:
+                    new_reclamo.añadir_imagen(session['imagen'])
+                db.session.commit()
+                return redirect('/mis_reclamos')
+
+        #except Exception:
+        #    print("También un error")
+        #    return render_template("/crear_reclamo.html")
             
-            db.session.commit()
 
-        except Exception:
-           return render_template("/crear_reclamo.html")
-
-        return redirect('/reclamos')
     else:
         return render_template("/crear_reclamo.html")
+    
+
+@app.route("/confirmar", methods=["GET","POST"])
+def confirmar():
+    destino = Departamento.query.filter_by(n_dpto=session['n_dpto']).first()
+    new_reclamo = Reclamo(session['asunto'], session['texto'], session['n_usuario'])
+    reclamos=db.session.query(Reclamo).filter(Reclamo.creador_id != session['n_usuario']) 
+    if request.method == "POST":
+        boton = request.form['boton']
+        print(boton)
+        if boton == "Confirmar reclamo":
+            db.session.add(new_reclamo)
+            destino.asignar_reclamo(new_reclamo)
+            if 'imagen' in session:
+                new_reclamo.añadir_imagen(session['imagen'])
+            db.session.commit()
+            return redirect("/mis_reclamos")
+        else:
+            reclamo = Reclamo.query.filter_by(codigo=boton).first()
+            reclamo.adherir(session['n_usuario'])
+            return redirect("/mis_reclamos")
+    else:   
+        return render_template("/confirmar.html", reclamos=reclamos) 
 
 
 @app.route("/mis_reclamos", methods=["GET","POST"])
 def mis_reclamos():
-    bandera = "mis"
-    return redirect("/reclamos")
+    reclamos = Reclamo.query.filter_by(creador_id=session['n_usuario']).all()
+    if request.method == "POST":
+        dpto = request.form['departamento']
+        reclamos = Reclamo.query.filter_by(n_dpto=dpto, creador_id=session['n_usuario']).all()
+        return render_template("/mis_reclamos.html", reclamos=reclamos)
+    return render_template("/mis_reclamos.html", reclamos=reclamos)
 
 @app.route("/listar_reclamos", methods=["GET","POST"])
 def listar_reclamos():
-    bandera = "listar"
-    return redirect("/reclamos")
-
-@app.route("/reclamos", methods=["GET","POST"])
-def reclamos():
+    departamentos = Departamento.query.all()
+    reclamos = Reclamo.query.all()
     if request.method == "POST":
-
-        pass
-        
-    else:
-
-        if bandera == "mis":
-            reclamos = Reclamo.query.filter_by(creador_id=session['n_usuario']).all()
-
-        elif bandera == "listar":
+        if 'departamento' in request.form:
+            dpto = request.form['departamento']
+            reclamos = Reclamo.query.filter_by(n_dpto=dpto).all()
+        elif 'boton' in request.form:
+            boton = request.form['boton']
+            reclamo_adhesion = Reclamo.query.filter_by(codigo=boton).first()
+            reclamo_adhesion.adherir(session['n_usuario'])
             reclamos = Reclamo.query.all()
+        return render_template("/listar_reclamos.html", reclamos=reclamos, departamentos=departamentos)
+    return render_template("/listar_reclamos.html", reclamos=reclamos, departamentos=departamentos)
 
-        return render_template("/reclamos.html", reclamos=reclamos)
+@app.route("/analitica", methods=["GET","POST"])
+def analitica():
+    pass
+
+@app.route("/manejar", methods=["GET","POST"])
+def manejar():
+    pass
+
+@app.route("/help", methods=["GET","POST"])
+def help():
+    pass
 
 #Éstas líneas corren el programa de manera "continua"
 if __name__ == "__main__":
     app.run(debug=True)
+

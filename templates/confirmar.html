@@ -20,14 +20,20 @@
     }
     </style>
 
+
+<h4> Reclamos similares: puedes adherirte a uno en lugar de confirmar el tuyo </h4>
+
 <table >
   <thead>
       <tr>
         <th> Asunto </th>
         <th> Cuerpo </th>
         <th> Estado </th>
+        <th> Departamento </th>
         <th> Creador </th>
+        <th> Fecha </th>
         <th> Adherentes </th>
+        <th> Adherirse (click en el codigo) </tr>
       </tr>
   </thead>
   <tbody>
@@ -35,14 +41,28 @@
       <tr> 
         <td> {{ reclamo.asunto }} </td>
         <td> {{ reclamo.texto }} </td>
+        <td> {{ reclamo.departamento.nombre_dpto }}</td>
         <td> {{ reclamo.estado }} </td>
         <td> {{ reclamo.creador.nombre_usuario }} </td>
-        <td> {{ reclamo.creador }} </td>
-      </tr>
+        <td> {{ reclamo.fecha }} </td>
+        <td> {{ reclamo.usuarios_adheridos.count()  }} </td>
+        <td>
+          <form method="POST" action="/confirmar">
+            <input type="submit" name="boton" value="{{reclamo.codigo}}">
+          Adherirse
+          </form>
+          
+        </td>
+        
     {% endfor %}
   </tbody>
 
 </table>
 
+<br> <br>
+<form method="post" action="/confirmar" name="boton"> <input type="submit" name="boton" value="Confirmar reclamo"> </form>
+
+
+<a href="/crear_reclamo"> Volver </a>
 
 {% endblock %}
