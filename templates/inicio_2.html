@@ -7,9 +7,17 @@
 <h1>Bienvenido, {{session["tipo_usuario"]}} {{session["nombre_de_pila"]}}!!!</h1>
     <br><br>
 
-    <a href="/manejo"> Manejar Reclamos </a><br><br>
+    <a href="/manejar"> Manejar Reclamos </a><br><br>
     <a href="/analitica"> Analitica </a><br><br>
     <a href="/help"> Ayuda </a><br><br>
+    <form method="POST" action="/reporte">
+        <label style="font-weight: normal; color: rgb(71, 107, 175);"> Reporte </label>
+        <select name="reporte" > 
+            <option value="HTML"> HTML </option>
+            <option value="PDF"> PDF </option>
+        </select>
+      <input type="submit">
+      </form><br><br>
     <a href="/logout">Cerrar Sesión</a>
 
 {% endblock %}

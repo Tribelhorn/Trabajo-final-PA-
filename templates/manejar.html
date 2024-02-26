@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+
+<table >
+    <thead>
+        <tr>
+          <th> Asunto </th>
+          <th> Cuerpo </th>
+          <th> Departamento </th>
+          <th> Estado </th>
+          <th> Creador </th>
+          <th> Fecha </th>
+          <th> Adherentes</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for reclamo in reclamos %}
+        <tr> 
+          <td> {{ reclamo.asunto }} </td>
+          <td> {{ reclamo.texto }} </td>
+          {% if tipo_usuario == "secretario" %}
+            
+                
+            <td> 
+              <form method="POST" action="/manejar">
+                {% if reclamo.departamento %}
+                  <label> {{ reclamo.departamento.nombre_dpto }} </label>
+                  <select name="departamento" value="{{ reclamo.departamento.nombre_dpto }}" > 
+                {% else %}
+                  <label> Vacante </label>
+                  <select  name="departamento" value=" Vacante ">
+                {% endif %}
+
+                {% for dpto in departamentos %}
+
+                  <option value="{{ dpto.n_dpto }}"> {{ dpto.nombre_dpto }} </option>
+                  
+                  
+
+                {% endfor %} 
+              </select>
+              <input type="submit" name="boton" value="{{ reclamo.codigo}}">
+              </form>
+             </td>
+                  
+
+                
+            
+          {% else %}
+
+            <td> {{ reclamo.departamento.nombre_dpto }} </td>
+
+          {% endif %}
+          <td> 
+          
+
+          <form method="POST" action="/manejar">
+            <label> {{ reclamo.estado }} </label>
+            <select name = estado value="{{ reclamo.estado }}" > 
+                <option value="Pendiente"> Pendiente </option>
+                <option value="Inválido"> Inválido </option>
+                <option value="En proceso"> En proceso </option>
+                <option value="Resuelto"> Resuelto </option>
+            </select>
+            <input type="submit" name="boton" value=" {{ reclamo.codigo }} ">
+          </form>
+
+          </td>
+          <td> {{ reclamo.creador.nombre_usuario }} </td>
+          <td> {{ reclamo.fecha }} </td>
+          <td> {{ reclamo.usuarios_adheridos.count()  }} </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  
+</table>
+
+<a href="/inicio"> Volver </a>
+
+{% endblock %}

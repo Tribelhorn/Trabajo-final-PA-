@@ -2,23 +2,40 @@
 
 {% block body %}
 
-<style>
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    td, th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-    
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
+{% if mensaje %}
+    <div id="popup-container" class="popup">
+        <span class="popuptext" style="color: rgb(0, 176, 12); background-color: white;">{{ mensaje }}</span>
+    </div>
+
+    <style>
+        /* Estilos CSS para el pop-up */
+        #popup-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid black;
+            padding: 20px;
+            z-index: 9999;
+        }
     </style>
+
+    <script>
+        // Mostrar el pop-up cuando la página se haya cargado completamente
+        window.onload = function() {
+            document.getElementById('popup-container').style.display = 'block';
+            // Desaparecer el pop-up después de 3 segundos (3000 milisegundos)
+            setTimeout(function() {
+                document.getElementById('popup-container').style.display = 'none';
+            }, 10000);
+        };
+    </script>
+
+    <br>
+{% endif %}
+
 
 <form method="POST" action="/mis_reclamos" >
   <label> Departamento:</label>
@@ -35,6 +52,7 @@
       <tr>
         <th> Asunto </th>
         <th> Cuerpo </th>
+        <th> Departamento </th>
         <th> Estado </th>
         <th> Creador </th>
         <th> Fecha </th>
@@ -46,6 +64,7 @@
       <tr> 
         <td> {{ reclamo.asunto }} </td>
         <td> {{ reclamo.texto }} </td>
+        <td> {{ reclamo.departamento.nombre_dpto }} </td>
         <td> {{ reclamo.estado }} </td>
         <td> {{ reclamo.creador.nombre_usuario }} </td>
         <td> {{ reclamo.fecha }} </td>

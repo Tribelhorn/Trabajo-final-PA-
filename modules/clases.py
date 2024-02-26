@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from modules.db import db
+from db import db
 #from models.usuario import Usuario
 import bcrypt 
 
@@ -112,7 +112,7 @@ class Jefe(Usuario):
     def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, edad, departamento):
         super().__init__(nombre_usuario, correo, contraseña, nombre_de_pila, edad)
         departamento.asignar_jefe(self)
-        self.departamento = departamento.n_dpto
+        self.n_dpto = departamento.n_dpto
         self.tipo_usuario = "jefe"
 
 class Secretario(Usuario):
@@ -126,6 +126,7 @@ class Secretario(Usuario):
     def __init__(self, nombre_usuario, correo, contraseña, nombre_de_pila, edad):
         super().__init__ (nombre_usuario, correo, contraseña, nombre_de_pila, edad)
         self.tipo_usuario = "secretario"
+
     
 
 
@@ -144,8 +145,9 @@ class Reclamo(db.Model):
     creador_id = db.Column(db.Integer, db.ForeignKey(Usuario_Final.n_usuario, deferrable=True, initially='deferred'))
     creador = db.relationship('Usuario_Final', back_populates='reclamos_creados')
     usuarios_adheridos = db.relationship('Usuario_Final', secondary='adhesiones', back_populates='adhesiones', lazy='dynamic')
+    bolsa= db.Column(db.String(666), nullable=False)
 
-    def __init__(self, asunto, texto,  creador_id):
+    def __init__(self, asunto, texto,  creador_id, bolsa):
         self.texto = texto
         self.asunto = asunto
         self.creador_id = creador_id
@@ -153,21 +155,26 @@ class Reclamo(db.Model):
         self.estado = "Pendiente"
         self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
         self.usuarios_adheridos = []
+        self.bolsa = bolsa
 
     def añadir_imagen(self, imagen):
         self.imagen = imagen
 
     def adherir(self, usuario_id):
         #try:
+            mensaje = False
             usuario = Usuario.query.filter_by(n_usuario=usuario_id).first()
             if usuario in self.usuarios_adheridos:
                 pass
             elif self.creador_id != usuario_id:
                 self.usuarios_adheridos.append(usuario)
                 db.session.commit()
+                mensaje = "Adherido a reclamo"
+            return (mensaje)
         #except:
         #    raise InterruptedError
-
+    def cambiar_estado(self, estado):
+        self.estado = estado
 
 
 adhesiones = db.Table('adhesiones',

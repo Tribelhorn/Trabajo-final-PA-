@@ -23,6 +23,8 @@
 
 <h4> Reclamos similares: puedes adherirte a uno en lugar de confirmar el tuyo </h4>
 
+{% if reclamos %}
+
 <table >
   <thead>
       <tr>
@@ -58,6 +60,12 @@
   </tbody>
 
 </table>
+
+{% else %}
+
+  <p style="color: rgb(255, 0, 21);"> Aún no hay reclamos similares </p>
+
+{% endif %}
 
 <br> <br>
 <form method="post" action="/confirmar" name="boton"> <input type="submit" name="boton" value="Confirmar reclamo"> </form>

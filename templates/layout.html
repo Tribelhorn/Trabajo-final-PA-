@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -6,8 +7,32 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       </head>
+    <style> body {
+    margin-left: 20px
+} 
+
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }   
+    </style>
+
+
+
 <body>
-    <h1 style="background-color:blue; font-family: 'Times New Roman', Times, serif; text-align:center; color:white"> FI-UNER </h1>
+    
+    <h1 style="background-color:blue; font-family: 'Times New Roman', Times, serif; text-align:center; color:white; margin-left: -20px;"> FI-UNER </h1>
     {% block body %}
 
     {% endblock %}

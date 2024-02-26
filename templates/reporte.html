@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<table >
+    <thead>
+        <tr>
+          <th> Asunto </th>
+          <th> Cuerpo </th>
+          <th> Departamento </th>
+          <th> Estado </th>
+          <th> Creador </th>
+          <th> Fecha </th>
+          <th> Adherentes</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for reclamo in reclamos %}
+        <tr> 
+          <td> {{ reclamo.asunto }} </td>
+          <td> {{ reclamo.texto }} </td>
+          <td> {{ reclamo.departamento.nombre_dpto }} </td>
+          <td> {{ reclamo.estado }} </td>
+          <td> {{ reclamo.creador.nombre_usuario }} </td>
+          <td> {{ reclamo.fecha }} </td>
+          <td> {{ reclamo.usuarios_adheridos.count()  }} </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  
+</table>
+<div style="text-align: center;">
+<img src="/static/grafico_torta.png" alt="grafico_torta" width="500" height="500" style="position:center">
+</div> <br>
+<a href="/inicio"> Volver </a>
+{% endblock %}
